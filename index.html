@@ -6,44 +6,64 @@
 <title>Super Erik</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;800&display=swap">
 <style>
-/* Layout: one screen game — canvas centered, touch pads below on phones. Single committed sky look. */
+/* Layout: one screen game — canvas fills the screen at a variable view width; touch pads below (portrait) or over the game (landscape). Single committed sky look. */
 :root{--sky:#8fd3ff;--ink:#1d2b4a;--sun:#ffd23f;--coat:#ffcc1a;--grass:#4cb050;--panel:#ffffffd9;--display:"Baloo 2",ui-rounded,"Trebuchet MS",system-ui,sans-serif;color-scheme:light}
 [hidden]{display:none!important}
 html,body{height:100%}
-body{margin:0;background:var(--sky);color:var(--ink);font-family:var(--display);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:8px;box-sizing:border-box;overflow:hidden;user-select:none;-webkit-user-select:none}
-#wrap{position:relative;width:100%;max-width:960px}
-canvas{display:block;width:100%;aspect-ratio:16/9;max-width:100%;border-radius:14px;box-shadow:0 6px 0 #1d2b4a33;background:var(--sky);touch-action:none}
-#hud{position:absolute;top:10px;left:14px;right:14px;display:flex;justify-content:space-between;font-weight:800;font-size:clamp(14px,2.4vw,22px);pointer-events:none;text-shadow:0 2px 0 #fff}
-#overlay{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;text-align:center;border-radius:14px;background:#8fd3ffcc}
-#overlay h1{margin:0;font-size:clamp(34px,7vw,72px);line-height:1;color:var(--coat);-webkit-text-stroke:3px var(--ink);paint-order:stroke;text-wrap:balance}
-#overlay p{margin:0;font-size:clamp(14px,2.2vw,20px);font-weight:600;max-width:34ch}
+body{margin:0;background:var(--sky);color:var(--ink);font-family:var(--display);display:flex;flex-direction:column;align-items:center;gap:10px;padding-left:max(8px,env(safe-area-inset-left,0px));padding-right:max(8px,env(safe-area-inset-right,0px));padding-block:8px;box-sizing:border-box;overflow:hidden;user-select:none;-webkit-user-select:none;touch-action:manipulation}
+#box{flex:1;min-height:0;width:100%;display:flex;align-items:center;justify-content:center}
+#wrap{position:relative;max-width:100%}
+canvas{display:block;width:100%;height:100%;border-radius:14px;box-shadow:0 6px 0 #1d2b4a33;background:var(--sky);touch-action:none}
+#hud{position:absolute;top:8px;left:12px;right:12px;display:flex;justify-content:space-between;font-weight:800;font-size:clamp(16px,3.4vmin,24px);pointer-events:none;text-shadow:0 2px 0 #fff}
+#overlay{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;padding:12px;text-align:center;border-radius:14px;background:#8fd3ffcc}
+#overlay h1{margin:0;font-size:clamp(34px,10vmin,72px);line-height:1;color:var(--coat);-webkit-text-stroke:3px var(--ink);paint-order:stroke;text-wrap:balance}
+#overlay p{margin:0;font-size:clamp(15px,3.6vmin,20px);font-weight:600;max-width:34ch}
 button{font-family:var(--display);font-weight:800;border:3px solid var(--ink);border-radius:999px;background:var(--coat);color:var(--ink);cursor:pointer}
 button:focus-visible{outline:3px solid #fff;outline-offset:2px}
-#start{font-size:clamp(18px,3vw,26px);padding:6px 28px;box-shadow:0 4px 0 var(--ink)}
-#pads{display:none;width:100%;max-width:960px;justify-content:space-between;gap:12px}
-#pads div{display:flex;gap:12px}
-#pads button{width:72px;height:72px;font-size:28px;background:var(--panel);touch-action:none}
-#pads #bj{background:var(--coat);width:88px;height:88px}
-@media (pointer:coarse){#pads{display:flex}}
+#start{font-size:clamp(20px,5vmin,28px);padding:8px 32px;box-shadow:0 4px 0 var(--ink)}
+#pads{display:none;width:100%;justify-content:space-between;gap:12px;padding-bottom:env(safe-area-inset-bottom,0px)}
+#pads div{display:flex;gap:14px}
+#pads button{width:84px;height:84px;font-size:32px;background:var(--panel);touch-action:none}
+#pads #bj{background:var(--coat);width:100px;height:100px}
+#pads button.on{transform:scale(.92)}
+@media (pointer:coarse){#pads{display:flex}.keys{display:none}}
+/* liggende mobil: knappene står på hver side av spillet */
+@media (pointer:coarse) and (orientation:landscape) and (max-height:600px){
+  body{flex-direction:row;padding-block:4px max(4px,env(safe-area-inset-bottom,0px))}
+  #pads{display:contents}
+  #pads div{order:0;flex-direction:column;justify-content:center}
+  #box{order:1;height:100%}
+  #pads #bj{order:2;align-self:center}
+  #pads button{width:64px;height:64px;font-size:26px}
+  #pads #bj{width:76px;height:76px}
+}
 </style>
 </head>
 <body>
 
-<div id="wrap">
+<div id="box"><div id="wrap">
   <canvas id="c" width="960" height="540"></canvas>
   <div id="hud"><span id="cookies">🍪 0</span><span id="lives">❤️ 3</span></div>
   <div id="overlay">
     <h1>Super Erik</h1>
     <p id="msg">Erik er tre år og skal hjem til bamsen sin. Plukk kjeks, hopp over sneglene!</p>
     <button id="start">Spill!</button>
-    <p style="font-size:14px">Piltaster eller A/D for å gå · Mellomrom for å hoppe</p>
+    <p class="keys" style="font-size:14px">Piltaster eller A/D for å gå · Mellomrom for å hoppe</p>
   </div>
-</div>
+</div></div>
 <div id="pads"><div><button id="bl" aria-label="Venstre">◀</button><button id="br" aria-label="Høyre">▶</button></div><button id="bj" aria-label="Hopp">⤒</button></div>
 
 <script>
 const cv=document.getElementById('c'),g=cv.getContext('2d');
-const T=48,W=960,H=540;
+const T=48,H=540;let W=960;
+function fit(){
+  const b=document.getElementById('box'),bw=b.clientWidth,bh=b.clientHeight;if(!bw||!bh)return;
+  // synsfeltet blir bredere eller smalere etter skjermen, men høyden på brettet er alltid lik
+  W=Math.round(Math.max(620,Math.min(1400,bw*H/bh)));
+  const s=Math.min(bw/W,bh/H),wr=document.getElementById('wrap');
+  cv.width=W;cv.height=H;wr.style.width=Math.floor(W*s)+'px';wr.style.height=Math.floor(H*s)+'px';
+}
+addEventListener('resize',fit);addEventListener('orientationchange',()=>setTimeout(fit,200));
 // Level: # bakke, B murstein, ? kjeksboks, c kjeks, e snegl, G bamse (mål)
 const L=[
 "                                                                                                              ",
@@ -127,7 +147,7 @@ function drawErik(){
 }
 function draw(){
   g.fillStyle='#8fd3ff';g.fillRect(0,0,W,H);
-  g.fillStyle='#ffd23f';g.beginPath();g.arc(820-cam*.05,90,40,0,7);g.fill();
+  g.fillStyle='#ffd23f';g.beginPath();g.arc(W-140-cam*.05,90,40,0,7);g.fill();
   for(let i=0;i<14;i++){const x=(i*420-cam*.3)%(14*420);g.fillStyle='#fff';[0,30,60].forEach((d,j)=>{g.beginPath();g.arc(x+d,80+(i%3)*40,22+j%2*8,0,7);g.fill()})}
   for(let i=0;i<20;i++){const x=i*300-cam*.5;g.fillStyle=i%2?'#6fb38a':'#5aa37a';g.beginPath();g.moveTo(x-60,440);g.lineTo(x+90,250+(i%3)*30);g.lineTo(x+240,440);g.fill();g.fillStyle='#fff';g.beginPath();g.moveTo(x+60,268+(i%3)*30);g.lineTo(x+90,250+(i%3)*30);g.lineTo(x+120,268+(i%3)*30);g.fill()}
   const x0=Math.floor(cam/T),x1=x0+W/T+1;
@@ -155,8 +175,8 @@ const km={ArrowLeft:'l',a:'l',A:'l',ArrowRight:'r',d:'r',D:'r',ArrowUp:'j',w:'j'
 addEventListener('keydown',e=>{if(km[e.key]){keys[km[e.key]]=1;e.preventDefault()}if(e.key==='Enter'&&state==='menu')start.click()});
 addEventListener('keyup',e=>{if(km[e.key])keys[km[e.key]]=0});
 [['bl','l'],['br','r'],['bj','j']].forEach(([id,k])=>{const b=document.getElementById(id);
-  b.addEventListener('pointerdown',e=>{keys[k]=1;e.preventDefault()});['pointerup','pointerleave','pointercancel'].forEach(v=>b.addEventListener(v,()=>keys[k]=0))});
-load();loop();
+  b.addEventListener('pointerdown',e=>{keys[k]=1;b.classList.add('on');e.preventDefault()});['pointerup','pointerleave','pointercancel'].forEach(v=>b.addEventListener(v,()=>{keys[k]=0;b.classList.remove('on')}));b.addEventListener('contextmenu',e=>e.preventDefault())});
+fit();load();loop();
 </script>
 </body>
 </html>
