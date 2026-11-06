@@ -8,6 +8,7 @@
 <style>
 /* Layout: one screen game — canvas centered, touch pads below on phones. Single committed sky look. */
 :root{--sky:#8fd3ff;--ink:#1d2b4a;--sun:#ffd23f;--coat:#ffcc1a;--grass:#4cb050;--panel:#ffffffd9;--display:"Baloo 2",ui-rounded,"Trebuchet MS",system-ui,sans-serif;color-scheme:light}
+[hidden]{display:none!important}
 html,body{height:100%}
 body{margin:0;background:var(--sky);color:var(--ink);font-family:var(--display);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:8px;box-sizing:border-box;overflow:hidden;user-select:none;-webkit-user-select:none}
 #wrap{position:relative;width:100%;max-width:960px}
