@@ -86,7 +86,7 @@ function update(){
   t++;const e=erik,acc=e.on?.7:.45;
   if(keys.l){e.vx-=acc;e.face=-1}if(keys.r){e.vx+=acc;e.face=1}
   e.vx*=e.on?.82:.92;e.vx=Math.max(-5,Math.min(5,e.vx));
-  if(keys.j&&e.on){e.vy=-13.2;e.on=false;beep(520,.1)}
+  if(keys.j&&e.on){e.vy=-16;e.on=false;beep(520,.1)}
   if(!keys.j&&e.vy<-4)e.vy+=.9;
   e.vy=Math.min(e.vy+.6,14);e.on=false;collide(e,e.vx,0);collide(e,0,e.vy);
   if(e.x<0)e.x=0;if(e.inv>0)e.inv--;
