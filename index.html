@@ -100,7 +100,11 @@ function collide(o,dx,dy){
 }
 function bump(tx,ty){if(map[ty][tx]==='?'){map[ty][tx]='o';cookies++;pop(tx*T+24,ty*T-10,'#c98a3d');beep(880,.08)}}
 function pop(x,y,col){for(let i=0;i<10;i++)parts.push({x,y,vx:(Math.random()-.5)*5,vy:-Math.random()*5,l:30,col})}
-let ac;function beep(f,d){try{ac=ac||new AudioContext();const o=ac.createOscillator(),v=ac.createGain();o.type='square';o.frequency.value=f;v.gain.value=.05;o.connect(v).connect(ac.destination);o.start();o.frequency.exponentialRampToValueAtTime(f*1.5,ac.currentTime+d);o.stop(ac.currentTime+d)}catch(e){}}
+let ac;
+// mobil: lyd må låses opp i et trykk, og iPhone skal spille selv med lydløs-bryteren på
+function unlockAudio(){try{if(navigator.audioSession)navigator.audioSession.type='playback';ac=ac||new (window.AudioContext||window.webkitAudioContext)();if(ac.state!=='running')ac.resume();const b=ac.createBuffer(1,1,22050),s=ac.createBufferSource();s.buffer=b;s.connect(ac.destination);s.start(0)}catch(e){}}
+['pointerdown','touchend','keydown','click'].forEach(v=>addEventListener(v,unlockAudio,{capture:true,passive:true}));
+function beep(f,d){try{if(!ac)unlockAudio();if(ac.state!=='running')ac.resume();const o=ac.createOscillator(),v=ac.createGain();o.type='square';o.frequency.value=f;v.gain.value=.12;o.connect(v).connect(ac.destination);o.start();o.frequency.exponentialRampToValueAtTime(f*1.5,ac.currentTime+d);o.stop(ac.currentTime+d)}catch(e){}}
 function hurt(){if(erik.inv>0)return;lives--;beep(160,.3);if(lives<=0)return end('Å nei! Erik ble trøtt.','Prøv igjen');erik.inv=90;erik.vy=-8}
 function end(m,b){state='menu';msg.textContent=m;start.textContent=b;overlay.hidden=false}
 function update(){
